@@ -1,0 +1,1633 @@
+openapi: 3.0.0
+info:
+  title: Взаимодействие фронтенда и бэкенда в рамках приложения по проведению стажировок
+  version: 1.0.0
+tags:
+  - name: user
+    description: Взаимодействие с пользователями
+    #externalDocs:
+      #description: Find out more
+      #url: http://swagger.io
+  - name: announce
+    description: Взаимодействие с анонсами
+  - name: testTask
+    description: Взаимодействие с тестовыми
+  - name: lection
+    description: Взаимодействие с лекциями
+paths:
+#user
+  /getListOfPrograms: #Для вывода выпадающего списка
+    get:
+      tags:
+        - user
+      summary: Получить список стажировок
+      parameters:
+        - name: username
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    programName:
+                      type: string
+                      example: "Системный анализ"
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /getUserId: #получение id при авторизации. Будет кэшироваться
+    get:
+      tags:
+        - user
+      summary: Получить id пользователя
+      parameters:
+        - name: username
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                  type: object
+                  properties:
+                    userId:
+                      type: integer
+                      example: 1
+                      
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /users: #список пользователей
+    get:
+      tags:
+        - user
+      summary: Получение списка пользователей
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: userRole
+          in: query
+          required: false
+          description: фильтр по роли пользователя
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/UserShortInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+
+  /users/{id}/{homeworkId}: #получить домашнюю работу пользователя по id пользователя и id домашней работы
+    get:
+      tags:
+        - user
+      summary: получить ДЗ
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+        - name: homeworkId
+          in: path
+          description: ID домашнего задания
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/HomeworkInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /users/{id}: #получение пользователя по id - это просмотр страницы пользователя
+    get:
+      tags:
+        - user
+      summary: Получить пользователя по id
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFullInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /sendHR: #отправление на бэк для отправления в сб
+    post:
+      tags:
+        - user
+      summary: отправить кандидата в СБ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  example: 1324
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /chooseMentor: #выбор ментора
+    put:
+      tags:
+        - user
+      summary: назначить ментора для стажёра
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  example: 1324
+                mentorId:
+                  type: integer
+                  example: 14
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /mentorComment: #комментарий ментора
+    put:
+      tags:
+        - user
+      summary: комментарий ментора на странице стажёра
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  example: 1324
+                comment:
+                  type: string
+                  example: Хорошая успеваемость, активность на лекциях
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /updateHomework: #обновление лекции
+    put:
+      tags:
+        - user
+      summary: обновить домашнее задание
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+                type: object
+                properties:
+                  programId:
+                    type: integer
+                    example: 1
+                  testTask:
+                    type: string
+                    format: binary
+                    description: Тестовое задание
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: Id
+          in: path
+          description: ID домашнего задания
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+#announce
+  /annuonces: #список анонсов
+    get:
+      tags:
+        - announce
+      summary: Получение списка анонсов
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: internProgram
+          in: query
+          required: false
+          description: программа стажировки
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/AnnounceShortInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /announces/{id}: #получение анонса по id
+    get:
+      tags:
+        - announce
+      summary: Получить анонс по id
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID анонса
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnounceFullInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /candidates: #список кандидатов
+    get:
+      tags:
+        - announce
+      summary: Получение списка кандидатов
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: internProgram
+          in: query
+          required: false
+          description: программа стажировки
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/CandidateShortInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /candidates/{id}: #страница кандидата
+    get:
+      tags:
+        - announce
+      summary: Получить кандидата по id
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID кандидата
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateFullInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /addFormCandidate: #отправка формы кандидата
+    post:
+      tags:
+        - announce
+      summary: отправить форму
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Candidate'
+      parameters:
+        - name: announceId
+          in: header
+          required: false
+          description: Айди анонса, с которого перешёл пользователь
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /addAnnounce: #создание анонса
+    post:
+      tags:
+        - announce
+      summary: создать анонс
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddAnnounce'
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /sendSecurity: #отправление на бэк для отправления в сб
+    post:
+      tags:
+        - announce
+      summary: отправить кандидата в СБ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  example: 1324
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /updateAnnounce: #создание анонса
+    put:
+      tags:
+        - announce
+      summary: обновить анонс
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddAnnounce'
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: announceId
+          in: path
+          description: ID анонса
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+#testTask
+  /testTasks: #список кандидатов
+    get:
+      tags:
+        - testTask
+      summary: Получение списка тестовых
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: internProgram
+          in: query
+          required: false
+          description: программа стажировки
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID тестового задания
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/TestTaskShortInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /testTasks/{id}: #страница тестового
+    get:
+      tags:
+        - testTask
+      summary: Получение тестового по id
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID тестового
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/TestTaskFullInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /sendTestTask: #отправка тестового
+    post:
+      tags:
+        - testTask
+      summary: отправить тестовое руководителю
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  example: 1324
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /testChecking: #отправка решения по тестовому
+    post:
+      tags:
+        - testTask
+      summary: отправка статуса тестового
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: boolean
+                  example: true
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+#lection
+  /lections: #список лекций
+    get:
+      tags:
+        - lection
+      summary: Получение списка лекций
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: internProgram
+          in: query
+          required: false
+          description: программа стажировки
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/LectionShortInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /lections/{id}: #получение лекции по id - это просмотр лекции
+    get:
+      tags:
+        - lection
+      summary: Получить лекцию по id
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID лекции
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LectionFullInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'      
+  /addLection: #создание лекции
+    post:
+      tags:
+        - lection
+      summary: создать лекцию
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddLection'
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /updateLection: #обновление лекции
+    put:
+      tags:
+        - lection
+      summary: обновить лекцию лекцию
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddLection'
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: lectionId
+          in: path
+          description: ID лекции
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /deleteLection: #удаление лекции
+    delete:
+      tags:
+        - lection
+      summary: удалить лекцию
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: lectionId
+          in: path
+          description: ID лекции
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное удаление
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+components:
+  schemas:
+#информация об анонсах 
+    AnnounceShortInfo: #список анонсов
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          announceName:
+            type: string
+            example: "Анонс стажировки по системному анализу"
+          dateOfCreate:
+            type: string
+            example: "29.11.2023"
+          listOfPrograms: #список программ стажировок
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                programName:
+                  type: string
+                  example: "Системный анализ"
+    AnnounceFullInfo: #инфа на странице анонса
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        announceName:
+            type: string
+            example: "Анонс стажировки по системному анализу"
+        lectionDescription:
+          type: string
+          example: "Приходите к нам на стажировку"
+        dateOfCreate:
+          type: string
+          example: "29.11.2023"
+        internProgram: #программа стажировки
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            programName:
+              type: string
+              example: "Системный анализ"
+        ListOfMaterials: #выводит список приложенных файлов
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              fileName:
+                type: string
+                example: "тестовое задание.pdf"
+        formLink:
+          type: string
+          example: "Ссылка на форму подачи анкеты"
+    AddAnnounce: #форма создания/обновления анонса
+      type: object
+      properties:
+        mainInfo:
+          type: object
+          properties:
+            announceName:
+              type: string
+              example: Стажировка по системному анализу
+            formLink:
+              type: string
+              example: "/addForm/{programId}"
+            announceDescription:
+              type: string
+              example: Очень важное описание анонса
+            programId:
+              type: integer
+              example: 1
+            dateOfCreate:
+              type: string
+              example: 03.12.2023
+        testTask:
+          type: string
+          format: binary
+          description: Тестовое задание
+#информация о кандидатах
+    CandidateShortInfo: #список кандидатов
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          lastname:
+            type: string
+            example: "Иванов"
+          firstname:
+            type: string
+            example: "Иван"
+          middlename:
+            type: string
+            example: "Иванович"
+          role:
+            type: string
+            example: "Кандидат"
+          dateOfSend: #дата отправки тестового задания
+            type: integer
+            example: "30.11.2023"
+          testStatus:
+            type: string
+            example: "Статус тестового задания"
+          securityStatus:
+            type: string
+            example: "Статус проверки СБ"
+          listOfPrograms: #список программ стажировок
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                programName:
+                  type: string
+                  example: "Системный анализ"
+    CandidateFullInfo: #инфа на странице кандидата
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        lastname:
+          type: string
+          example: "Иванов"
+        firstname:
+          type: string
+          example: "Иван"
+        middlename:
+          type: string
+          example: "Иванович"
+        role:
+          type: string
+          example: "Кандидат"
+        birthdate:
+          type: string
+          example: "12.06.1998"
+        phoneNumber:
+          type: string
+          example: "88005553535"
+        email:
+          type: string
+          example: "examplemail@gmail.com"
+        photoUrl:
+          type: string
+          example: "/photos/123/" #ссылка на фото на сервере
+        test: #тестовое задание
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            userId:
+              type: string
+              example: "123"
+            workLink:
+              type: string
+              example: "ссылка на облако"
+            dateOfSend: #дата отправки тестового задания
+              type: integer
+              example: "30.11.2023"
+    Candidate: #форма отправки страницы кандидата
+      type: object
+      properties:
+        mainInfo:
+          type: object
+          properties:
+            lastName:
+              type: string
+              example: Иванов
+            firstName:
+              type: string
+              example: Иван
+            middleName:
+              type: string
+              example: Иванович
+            phoneNumber:
+              type: string
+              example: 88005553535
+            email:
+              type: string
+              example: example@gmail.com
+            birthtDate:
+              type: string
+              example: 01.01.1990
+            address:
+              type: string
+              example: Воронеж, улица Пушкина, дом 1, кв 1
+            testLink:
+              type: string
+              example: yandex.disk/uiq3hweri
+        photo:
+          type: string
+          format: binary
+          description: Фото пользователя
+
+#тестовые задания
+    TestTaskShortInfo: #список тестовых заданий
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          lastname:
+            type: string
+            example: "Иванов"
+          firstname:
+            type: string
+            example: "Иван"
+          middlename:
+            type: string
+            example: "Иванович"
+          role:
+            type: string
+            example: "Кандидат"
+          dateOfSend: #дата отправки тестового задания
+            type: integer
+            example: "30.11.2023"
+          testStatus:
+            type: string
+            example: "Статус тестового задания"
+    TestTaskFullInfo: #инфа на странице кандидата
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        announceId: #id анонса будет переделываться в ссылку
+          type: integer
+          example: 1
+        lastname:
+          type: string
+          example: "Иванов"
+        firstname:
+          type: string
+          example: "Иван"
+        middlename:
+          type: string
+          example: "Иванович"
+        role:
+          type: string
+          example: "Кандидат"
+        dateOfSend: #дата отправки тестового задания
+          type: integer
+          example: "30.11.2023"
+        workLink:
+          type: string
+          example: "ссылка на облако"
+        testStatus:
+          type: string
+          example: "Статус тестового задания"
+#информация о пользователях
+    UserShortInfo: #список пользователей
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          lastname:
+            type: string
+            example: "Иванов"
+          firstname:
+            type: string
+            example: "Иван"
+          middlename:
+            type: string
+            example: "Иванович"
+          role:
+            type: string
+            example: "Стажёр"
+          listOfRoles: #список программ стажировок
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                roleName:
+                  type: string
+                  example: "Ментор"
+    UserFullInfo: #инфа на странице пользователя
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        lastname:
+          type: string
+          example: "Иванов"
+        firstname:
+          type: string
+          example: "Иван"
+        middlename:
+          type: string
+          example: "Иванович"
+        role:
+          type: string
+          example: "Стажёр"
+        login:
+          type: string
+          example: "88005553535"
+        birthdate:
+          type: string
+          example: "12.06.1998"
+        phoneNumber:
+          type: string
+          example: "88005553535"
+        email:
+          type: string
+          example: "examplemail@gmail.com"
+        photoUrl:
+          type: string
+          example: "/photos/123/" #ссылка на фото на сервере
+        mentorId:
+          type: integer
+          example: "148 (id ментора, закрепленного за стажером)"
+        mentorComment:
+          type: string
+          example: "Комментарий ментора"
+        listOfHomeworks: #выводит список домашних заданий
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              lectionName:
+                type: string
+                example: "Лекция 1. Введение"
+              dateOfCreate:
+                type: string
+                example: "29.11.2023"
+              score:
+                type: integer
+                example: "4"
+        listOfInterns: #выводит список прикрепленных к ментору стажеров
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              lastname:
+                type: string
+                example: "Петров"
+              firstname:
+                type: string
+                example: "Петр"
+              middlename:
+                type: string
+                example: "Петрович"
+        listOfMentors: #список менторов - разобраться. скорее всего массив потерялся из страницы пользователя
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              lastname:
+                type: string
+                example: "Иванов"
+              firstname:
+                type: string
+                example: "Иван"
+              middlename:
+                type: string
+                example: "Иванович"
+    HomeworkInfo: #ДОДЕЛАТЬ
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        homeworkId:
+          type: integer
+          example: 23
+        lectionName:
+          type: string
+          example: "Лекция 1. Введение"      
+        listOfScore: #выводит список оценок от 1 до 5
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              score:
+                type: string
+                example: "5"
+        ListOfHomeworks: #выводит приложенные ДЗ
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              fileName:
+                type: string
+                example: "Лекция 1, домашнее задание.docx"
+    HeaderMenu: #менюшка в header с ссылками
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          lastname:
+            type: string
+            example: "Иванов"
+          firstname:
+            type: string
+            example: "Иван"
+          middlename:
+            type: string
+            example: "Иванович"
+#Информация о лекциях
+    LectionShortInfo: #список лекций
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          lectionName:
+            type: string
+            example: "Лекция 1. Введение"
+          dateOfEvent:
+            type: string
+            example: "29.11.2023"
+          listOfPrograms: #список программ стажировок
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                programName:
+                  type: string
+                  example: "Системный анализ"
+    LectionFullInfo: #инфа на странице лекции
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        lectionName:
+          type: string
+          example: "Лекция 1. Введение"
+        lectionDescription:
+          type: string
+          example: "На данной лекции происходит знакомство с компанией"
+        dateOfEvent:
+          type: string
+          example: "29.11.2023"
+        internProgram: #программа стажировки
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            programName:
+              type: string
+              example: "Системный анализ"
+        ListOfMaterials: #выводит список приложенных файлов
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              fileName:
+                type: string
+                example: "Лекция 1, презентация.pdf"
+        ListOfHomeworks: #выводит приложенные ДЗ
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              fileName:
+                type: string
+                example: "Лекция 1, домашнее задание.pdf"
+    AddLection: #форма создания/обновления анонса
+      type: object
+      properties:
+        MainInfo:
+          type: object
+          properties:
+            lectionName:
+              type: string
+              example: Лекция 1. Введение
+            lectionDescription:
+              type: string
+              example: "Знакомство с компанией, процессом обучения и сотрудниками"
+            lectionDate:
+              type: string
+              example: 04.12.2023
+            programId:
+              type: integer
+              example: 1
+        lectionMaterials:
+          type: array
+          items:
+            type: string
+            format: binary
+            description: Материал лекции
+        homework:
+          type: array
+          items:
+            type: string
+            format: binary
+            description: Домашнее задание
+#ответы
+    GenericError: #400 - общая ошибка
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Внутренняя ошибка"
+        errorCode:
+          type: string
+          example: "400"
+    AuthError: #400 - ошибка авторизации
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Доступ запрещён"
+        errorCode:
+          type: string
+          example: "403"
+    SuccessResponse: #Статус ок при отправке анкеты формы
+      type: object
+      properties:
+        status:
+          type: string
+          example: Успешно
