@@ -16,7 +16,7 @@ tags:
     description: Взаимодействие с лекциями
 paths:
 #user
-  /getListOfPrograms: #Для вывода выпадающего списка
+  /ListOfPrograms: #Для вывода выпадающего списка
     get:
       tags:
         - user
@@ -49,36 +49,114 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
-  /getUserId: #получение id при авторизации. Будет кэшироваться
-    get:
+  /sendReg: #отправление данных для регистрации на бэк
+    post:
       tags:
         - user
-      summary: Получить id пользователя
+      summary: отправка данных для регистрации пользователя на бэке
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userLogin:
+                  type: string
+                  example: 79000000000
       parameters:
         - name: username
           in: header
-          required: true
+          required: false
+          description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
           description: Успешный запрос
           content:
             application/json:
               schema:
-                  type: object
-                  properties:
-                    userId:
-                      type: integer
-                      example: 1
-                      
+                $ref: '#/components/schemas/SuccessResponse'
         '400':
           description: Ответ в случае ошибки
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
-  /users: #список пользователей
+  /sendAuth: #отправление данных для авторизации на бэк
+    post:
+      tags:
+        - user
+      summary: отправка данных для авторизации пользователя на бэке
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userLogin:
+                  type: string
+                  example: 79000000000
+                userPass:
+                  type: string
+                  example: 123abc
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuth'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /UserList: #список пользователей
     get:
       tags:
         - user
@@ -116,11 +194,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericError'
 
-  /users/{id}/{homeworkId}: #получить домашнюю работу пользователя по id пользователя и id домашней работы
+  /HomeworkById: #получить домашнюю работу пользователя по id пользователя и id домашней работы
     get:
       tags:
         - user
-      summary: получить ДЗ
+      summary: получить страницу ДЗ по id
       parameters:
         - name: username
           in: header
@@ -159,7 +237,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
-  /users/{id}: #получение пользователя по id - это просмотр страницы пользователя
+  /UserById: #получение пользователя по id - это просмотр страницы пользователя
     get:
       tags:
         - user
@@ -190,6 +268,171 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserFullInfo'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /UserHomeworks: #для получения списка домашних заданий на странице пользователя
+    get:
+      tags:
+        - user
+      summary: Получить список ДЗ пользователя
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listOfHomeworks: #выводит список домашних заданий
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        lectionName:
+                          type: string
+                          example: "Лекция 1. Введение"
+                        dateOfCreate:
+                          type: string
+                          example: "29.11.2023"
+                        score:
+                          type: integer
+                          example: 4
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /ListOfMentors: #для получения списка менторов руководителем (когда он их назначает)
+    get:
+      tags:
+        - user
+      summary: Получить список менторов
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listOfMentors: #список менторов - разобраться. скорее всего массив потерялся из страницы пользователя
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        lastname:
+                          type: string
+                          example: "Иванов"
+                        firstname:
+                          type: string
+                          example: "Иван"
+                        middlename:
+                          type: string
+                          example: "Иванович"
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /ListOfInterns: #для получения списка стажёров, приписанных к ментору
+    get:
+      tags:
+        - user
+      summary: Получить список стажёров
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listOfInterns: #выводит список прикрепленных к ментору стажеров
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        lastname:
+                          type: string
+                          example: "Петров"
+                        firstname:
+                          type: string
+                          example: "Петр"
+                        middlename:
+                          type: string
+                          example: "Петрович"
         '400':
           description: Ответ в случае ошибки
           content:
@@ -1402,57 +1645,6 @@ components:
         mentorComment:
           type: string
           example: "Комментарий ментора"
-        listOfHomeworks: #выводит список домашних заданий
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-                example: 1
-              lectionName:
-                type: string
-                example: "Лекция 1. Введение"
-              dateOfCreate:
-                type: string
-                example: "29.11.2023"
-              score:
-                type: integer
-                example: "4"
-        listOfInterns: #выводит список прикрепленных к ментору стажеров
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-                example: 1
-              lastname:
-                type: string
-                example: "Петров"
-              firstname:
-                type: string
-                example: "Петр"
-              middlename:
-                type: string
-                example: "Петрович"
-        listOfMentors: #список менторов - разобраться. скорее всего массив потерялся из страницы пользователя
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-                example: 1
-              lastname:
-                type: string
-                example: "Иванов"
-              firstname:
-                type: string
-                example: "Иван"
-              middlename:
-                type: string
-                example: "Иванович"
     HomeworkInfo: #ДОДЕЛАТЬ
       type: object
       properties:
@@ -1631,3 +1823,21 @@ components:
         status:
           type: string
           example: Успешно
+    SuccessAuth: #ответ при успешной авторизации
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 123
+        role:
+          type: string
+          example: Стажёр
+        token:
+          type: string
+          example: token
+        expires_in:
+          type: integer
+          example: 86400
+        token_type:
+          type: string
+          example: bearer
