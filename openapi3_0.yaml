@@ -27,6 +27,24 @@ paths:
           required: true
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
           description: Успешный запрос
@@ -1661,17 +1679,12 @@ components:
           dateOfCreate:
             type: string
             example: "29.11.2023"
-          listOfPrograms: #список программ стажировок
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  example: 1
-                programName:
-                  type: string
-                  example: "Системный анализ"
+          programId: 
+            type: integer
+            example: 1
+          programName:
+            type: string
+            example: "Системный анализ"
     AnnounceFullInfo: #инфа на странице анонса
       type: object
       properties:
@@ -1697,16 +1710,17 @@ components:
               type: string
               example: "Системный анализ"
         ListOfMaterials: #выводит список приложенных файлов
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-                example: 1
-              fileName:
-                type: string
-                example: "тестовое задание.pdf"
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            fileName:
+              type: string
+              example: "тестовое задание.pdf"
+            fuleUrl:
+              type: string
+              example: /files/testTaskforCandidates.pdf
         formLink:
           type: string
           example: "Ссылка на форму подачи анкеты"
@@ -2043,24 +2057,20 @@ components:
         properties:
           id:
             type: integer
-            example: 1
+            example: 7
+          programId: #айди программы стажировок
+            type: integer
+            example: 4
+          programName:
+            type: string
+            example: Системный анализ
           lectionName:
             type: string
             example: "Лекция 1. Введение"
           dateOfEvent:
             type: string
             example: "29.11.2023"
-          listOfPrograms: #список программ стажировок
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  example: 1
-                programName:
-                  type: string
-                  example: "Системный анализ"
+          
     LectionFullInfo: #инфа на странице лекции
       type: object
       properties:
