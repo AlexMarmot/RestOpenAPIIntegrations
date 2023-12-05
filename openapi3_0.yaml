@@ -53,7 +53,7 @@ paths:
     post:
       tags:
         - user
-      summary: отправка данных для регистрации пользователя на бэке
+      summary: отправка данных для регистрации пользователя
       requestBody:
         content:
           application/json:
@@ -101,11 +101,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
-  /sendAuth: #отправление данных для авторизации на бэк
+  /sendAuth: #отправление данных для авторизации на бэк. С токеном возвращается id пользователя и роль
     post:
       tags:
         - user
-      summary: отправка данных для авторизации пользователя на бэке
+      summary: отправка данных для авторизации пользователя
       requestBody:
         content:
           application/json:
@@ -168,6 +168,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -204,6 +210,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
@@ -249,6 +261,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -284,6 +302,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
@@ -341,6 +365,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -394,6 +424,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
@@ -460,6 +496,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -509,6 +551,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -556,6 +604,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
@@ -608,6 +662,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -644,6 +704,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
@@ -683,6 +749,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -720,6 +792,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -755,6 +833,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
@@ -829,6 +913,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -875,6 +965,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -917,6 +1013,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -953,6 +1055,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
@@ -996,6 +1104,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
@@ -1044,6 +1158,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -1090,6 +1210,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -1128,6 +1254,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -1163,6 +1295,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
@@ -1207,6 +1345,12 @@ paths:
           description: логин пользователя
           schema:
             type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
         - name: token
           in: header
           required: false
@@ -1241,6 +1385,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
@@ -1278,6 +1428,12 @@ paths:
           in: header
           required: false
           description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
           schema:
             type: string
         - name: token
