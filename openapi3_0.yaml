@@ -16,7 +16,7 @@ tags:
     description: Взаимодействие с лекциями
 paths:
 #user
-  /ListOfPrograms: #Для вывода выпадающего списка
+  /listOfPrograms: #Для вывода выпадающего списка
     get:
       tags:
         - user
@@ -49,6 +49,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /sendReg: #отправление данных для регистрации на бэк
     post:
       tags:
@@ -101,6 +107,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /sendAuth: #отправление данных для авторизации на бэк. С токеном возвращается id пользователя и роль
     post:
       tags:
@@ -156,7 +168,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
-  /UserList: #список пользователей
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+  /userList: #список пользователей
     get:
       tags:
         - user
@@ -199,8 +217,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
 
-  /HomeworkById: #получить домашнюю работу пользователя по id пользователя и id домашней работы
+  /homeworkById: #получить домашнюю работу пользователя по id пользователя и id домашней работы
     get:
       tags:
         - user
@@ -249,7 +273,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
-  /UserById: #получение пользователя по id - это просмотр страницы пользователя
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+  /userById: #получение пользователя по id - это просмотр страницы пользователя
     get:
       tags:
         - user
@@ -292,7 +322,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
-  /UserHomeworks: #для получения списка домашних заданий на странице пользователя
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+  /userHomeworks: #для получения списка домашних заданий на странице пользователя
     get:
       tags:
         - user
@@ -335,7 +371,10 @@ paths:
                     items:
                       type: object
                       properties:
-                        id:
+                        UserId:
+                          type: integer
+                          example: 1
+                        lectionId:
                           type: integer
                           example: 1
                         lectionName:
@@ -353,7 +392,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
-  /ListOfMentors: #для получения списка менторов руководителем (когда он их назначает)
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+  /listOfMentors: #для получения списка менторов руководителем (когда он их назначает)
     get:
       tags:
         - user
@@ -414,7 +459,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
-  /ListOfInterns: #для получения списка стажёров, приписанных к ментору
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+  /listOfInterns: #для получения списка стажёров, приписанных к ментору
     get:
       tags:
         - user
@@ -475,6 +526,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /sendHR: #отправление на бэк для отправления в сб
     post:
       tags:
@@ -527,6 +584,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /chooseMentor: #выбор ментора
     put:
       tags:
@@ -582,6 +645,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /mentorComment: #комментарий ментора
     put:
       tags:
@@ -637,6 +706,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /updateHomework: #обновление лекции
     put:
       tags:
@@ -693,6 +768,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
 #announce
   /annuonces: #список анонсов
     get:
@@ -737,6 +818,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /announces/{id}: #получение анонса по id
     get:
       tags:
@@ -780,6 +867,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /candidates: #список кандидатов
     get:
       tags:
@@ -823,6 +916,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /candidates/{id}: #страница кандидата
     get:
       tags:
@@ -866,6 +965,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /addFormCandidate: #отправка формы кандидата
     post:
       tags:
@@ -896,6 +1001,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /addAnnounce: #создание анонса
     post:
       tags:
@@ -944,6 +1055,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /sendSecurity: #отправление на бэк для отправления в сб
     post:
       tags:
@@ -996,6 +1113,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /updateAnnounce: #создание анонса
     put:
       tags:
@@ -1044,6 +1167,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
 #testTask
   /testTasks: #список кандидатов
     get:
@@ -1094,6 +1223,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /testTasks/{id}: #страница тестового
     get:
       tags:
@@ -1137,6 +1272,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /sendTestTask: #отправка тестового
     post:
       tags:
@@ -1189,6 +1330,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /testChecking: #отправка решения по тестовому
     post:
       tags:
@@ -1241,6 +1388,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
 #lection
   /lections: #список лекций
     get:
@@ -1285,6 +1438,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /lections/{id}: #получение лекции по id - это просмотр лекции
     get:
       tags:
@@ -1328,6 +1487,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'      
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /addLection: #создание лекции
     post:
       tags:
@@ -1370,6 +1535,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /updateLection: #обновление лекции
     put:
       tags:
@@ -1418,6 +1589,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
   /deleteLection: #удаление лекции
     delete:
       tags:
@@ -1461,6 +1638,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
 components:
   schemas:
 #информация об анонсах 
@@ -1964,7 +2147,7 @@ components:
         errorCode:
           type: string
           example: "400"
-    AuthError: #400 - ошибка авторизации
+    AuthError: #403 - ошибка авторизации
       type: object
       properties:
         error:
