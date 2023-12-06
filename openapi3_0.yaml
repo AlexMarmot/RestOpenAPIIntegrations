@@ -1355,7 +1355,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthError'
   /testChecking: #отправка решения по тестовому
-    post:
+    put:
       tags:
         - testTask
       summary: отправка статуса тестового
@@ -1365,9 +1365,9 @@ paths:
             schema:
               type: object
               properties:
-                userId:
-                  type: boolean
-                  example: true
+                checkStatus:
+                  type: integer
+                  example: 1
       parameters:
         - name: username
           in: header
