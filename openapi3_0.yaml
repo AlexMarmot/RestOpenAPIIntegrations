@@ -216,7 +216,7 @@ paths:
           description: выданный токен
           schema:
             type: string
-        - name: userRole
+        - name: userRoleFilter
           in: query
           required: false
           description: фильтр по роли пользователя
@@ -1703,16 +1703,16 @@ components:
         internProgram: #программа стажировки
           type: object
           properties:
-            id:
+            programId:
               type: integer
               example: 1
             programName:
               type: string
               example: "Системный анализ"
-        ListOfMaterials: #выводит список приложенных файлов
+        testTask: #выводит список приложенных файлов
           type: object
           properties:
-            id:
+            fileId:
               type: integer
               example: 1
             fileName:
@@ -1953,7 +1953,7 @@ components:
             items:
               type: object
               properties:
-                id:
+                roleId:
                   type: integer
                   example: 1
                 roleName:
