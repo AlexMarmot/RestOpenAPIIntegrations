@@ -1876,6 +1876,12 @@ components:
         workLink:
           type: string
           example: "ссылка на облако"
+        securityStatus:
+          type: string
+          example: "Статус проверки СБ"
+        securityComment:
+          type: string
+          example: "Комментарий СБ"
     Candidate: #форма отправки страницы кандидата
       type: object
       properties:
