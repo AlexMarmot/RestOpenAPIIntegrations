@@ -550,11 +550,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthError'
-  /sendHR: #отправление на бэк для отправления в сб
+  /sendHR: #отправление на бэк для отправления в HR
     post:
       tags:
         - user
-      summary: отправить кандидата в СБ
+      summary: отправить стажера в HR
       requestBody:
         content:
           application/json:
@@ -730,7 +730,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthError'
-  /updateHomework: #обновление лекции
+  /updateHomework: #обновление ДЗ
     put:
       tags:
         - user
@@ -741,9 +741,6 @@ paths:
             schema:
                 type: object
                 properties:
-                  programId:
-                    type: integer
-                    example: 1
                   testTask:
                     type: string
                     format: binary
@@ -770,6 +767,70 @@ paths:
         - name: Id
           in: path
           description: ID домашнего задания
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Ответ в случае ошибки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '403':
+          description: Ответ в случае неподходящей роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+  /updateScore: #обновление ДЗ
+    put:
+      tags:
+        - user
+      summary: обновить домашнее задание
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                score: #оценка
+                  type: integer
+                  example: 4
+      parameters:
+        - name: username
+          in: header
+          required: false
+          description: логин пользователя
+          schema:
+            type: string
+        - name: userRole
+          in: header
+          required: false
+          description: роль пользователя
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: false
+          description: выданный токен
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID домашнего задания
+          required: true
+          schema:
+            type: integer
+        - name: internId
+          in: path
+          description: ID стажера
           required: true
           schema:
             type: integer
@@ -1779,17 +1840,6 @@ components:
           securityStatus:
             type: string
             example: "Статус проверки СБ"
-          listOfPrograms: #список программ стажировок
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  example: 1
-                programName:
-                  type: string
-                  example: "Системный анализ"
     CandidateFullInfo: #инфа на странице кандидата
       type: object
       properties:
@@ -1820,21 +1870,12 @@ components:
         photoUrl:
           type: string
           example: "/photos/123/" #ссылка на фото на сервере
-        test: #тестовое задание
-          type: object
-          properties:
-            id:
-              type: integer
-              example: 1
-            userId:
-              type: string
-              example: "123"
-            workLink:
-              type: string
-              example: "ссылка на облако"
-            dateOfSend: #дата отправки тестового задания
-              type: integer
-              example: "30.11.2023"
+        testId:
+          type: integer
+          example: 1
+        workLink:
+          type: string
+          example: "ссылка на облако"
     Candidate: #форма отправки страницы кандидата
       type: object
       properties:
@@ -1998,7 +2039,7 @@ components:
         mentorComment:
           type: string
           example: "Комментарий ментора"
-    HomeworkInfo: #ДОДЕЛАТЬ
+    HomeworkInfo: #информация о ДЗ
       type: object
       properties:
         id:
@@ -2010,23 +2051,15 @@ components:
         lectionName:
           type: string
           example: "Лекция 1. Введение"      
-        listOfScore: #выводит список оценок от 1 до 5
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-                example: 1
-              score:
-                type: string
-                example: "5"
+        score:
+          type: integer
+          example: 3
         ListOfHomeworks: #выводит приложенные ДЗ
           type: array
           items:
             type: object
             properties:
-              id:
+              fileId:
                 type: integer
                 example: 1
               fileName:
@@ -2089,7 +2122,7 @@ components:
         internProgram: #программа стажировки
           type: object
           properties:
-            id:
+            programId:
               type: integer
               example: 1
             programName:
@@ -2100,7 +2133,7 @@ components:
           items:
             type: object
             properties:
-              id:
+              materialId:
                 type: integer
                 example: 1
               fileName:
@@ -2111,7 +2144,7 @@ components:
           items:
             type: object
             properties:
-              id:
+              homeworkId:
                 type: integer
                 example: 1
               fileName:
